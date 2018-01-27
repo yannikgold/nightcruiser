@@ -1,0 +1,26 @@
+{
+  "name": "partydriver",
+  "version": "0.0.1",
+  "description": "Find local party drivers in this moment.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://ygold@bitbucket.org/ygold/partydriver.git"
+  },
+  "keywords": [
+    "party",
+    "night",
+    "driver",
+    "social",
+    "transport"
+  ],
+  "author": "Yannik Goldgräbe",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/ygold/partydriver#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
