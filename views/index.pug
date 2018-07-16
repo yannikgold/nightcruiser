@@ -1,5 +1,273 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  h1 locationDriver
+  #map(style='height: 70vh;')
+  button.driver-mode(type='button') Become a driver in this area!
+  //#locationModal.modal
+    .modal-content
+  #driver-settings
+    //span.close ×
+    //p Some text in the Modal..
+    label Name: 
+    input(type='text', name='name', placeholder='Max Mustermann')
+    br
+    label Bild vom Auto: 
+    input(type='file', name='image', accept='image/*')
+    br
+    label Kontaktnummer: 
+    input(type='tel', name='phone', placeholder='0123456789')
+    br
+    label Anzahl Plätze: 
+    select.car-spots
+      option(value='1') 1
+      option(value='2') 2
+      option(value='3') 3
+      option(value='4') 4
+      option(value='5+') 5+
+    br
+    p Radius: 
+    //p /*Placeholder Select Slider*/
+    input#radius-slider(type='range', min='1', max='25000', value='3000')
+    br
+    label Dauer des Angebots: 
+    select.offer-duration
+      option(value='1') 1 Stunde
+      option(value='2') 2 Stunden
+      option(value='3') 3 Stunden
+      option(value='4') 4 Stunden
+      option(value='5') 5 Stunden
+      option(value='6') 6 Stunden
+    br
+    label Pauschalpreis: 
+    input(type='tel', name='price', placeholder='€')
+    br
+    button.send-offer(type='button') Angebot speichern
+  script.
+    var driver = false;
+    //getLocation();
+    $('span.close').click(function(){
+      $('#locationModal').hide();
+    });
+    window.onclick = function(event) {
+        if ($(event.target).is('#locationModal')) {
+            $('#locationModal').hide();
+        }
+    }
+    //initMap();
+    function getLocation() {
+      if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(initMap);
+      } else { 
+          alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    //function initMap(position){
+      var map = L.map('map').setView([54.49634326685479, 9.0867555141449], 13);
+      //var map = L.map('map').setView([position.coords.latitude, position.coords.longitude], 13);
+      L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          subdomains: ['a','b','c']
+      }).addTo(map);
+      
+      //var marker = L.marker([position.coords.latitude, position.coords.longitude]).addTo(map);
+      /*var circle = L.circle([position.coords.latitude, position.coords.longitude], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 500
+      }).addTo(map);*/
+      //marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+      //circle.bindPopup("I am a circle.");
+      //var popup = L.popup().setLatLng([position.coords.latitude, position.coords.longitude]).setContent("I am a standalone popup.").openOn(map);
+      
+      var circles = L.layerGroup();
+
+      refreshOffers();
+
+      var newOffer;
+      var offers = [];
+      var selectedLocation = {};
+      //var selectedRadius = 3000;
+
+      function onMapClick(e) {
+        if(driver === true){
+          if (newOffer != undefined) {
+            map.removeLayer(newOffer);
+          };
+          selectedLocation = e.latlng;
+          newOffer = L.circle(e.latlng, {
+            color: '#4FB070',
+            fillColor: '#6BE387',
+            fillOpacity: 0.5,
+            radius: $('#radius-slider').val()
+          }).addTo(map);
+          $('#radius-slider').on("input change", function() {
+            //selectedRadius = this.value;
+            map.removeLayer(newOffer);
+            newOffer = L.circle(e.latlng, {
+              color: '#4FB070',
+              fillColor: '#6BE387',
+              fillOpacity: 0.5,
+              radius: this.value
+            }).addTo(map);
+          });
+          //var popup = L.popup().setLatLng(e.latlng).setContent("You clicked the map at " + e.latlng.toString()).openOn(map);
+          //var marker = L.marker().setLatLng(e.latlng).addTo(map);
+          /*ajaxPost('/newOffer', {
+            location: {
+              "type" : "Point", 
+              "coordinates" : [
+                  e.latlng.lat, 
+                  e.latlng.lng
+              ]
+            }
+          }, function(err, data){
+            if(!err){
+              console.log('Coordinates posted.');
+            }
+            refreshOffers();
+          });*/
+        } else {
+          console.log('driver mode disabled');
+        }
+      }
+
+      map.on('click', onMapClick);
+
+      function refreshOffers(){
+        $.get('/getOffers', function(response){
+          offers = response;
+          circles.clearLayers();
+
+          //circles = L.layerGroup();
+          if(!driver){
+            displayOffers();
+          }        
+          console.log('all offers: ', response);
+        });
+      }
+    //}
+
+    function displayOffers(){
+      offers.forEach(function(item) {
+        var circle = L.circle([item.location.coordinates[0], item.location.coordinates[1]], {
+          color: '#441E69',
+          fillColor: '#5D2990',
+          fillOpacity: 0.5,
+          radius: item.radius || 500
+        }).bindPopup(createPopup(item)).openPopup().on('click', function(){
+          console.log('test');
+          //refreshOffers();
+          circles.eachLayer(function (layer) {
+            layer.setStyle({color: '#441E69'});
+          });
+          //circles.setStyle({color: '#441E69'});
+          circle.setStyle({color: '#dddddd'});
+        });
+        circles.addLayer(circle).addTo(map);
+        //L.marker([item.location.coordinates[0], item.location.coordinates[1]]).addTo(map);
+      });
+      map.addLayer(circles);
+    }
+
+    function createPopup(offer){
+        
+      // Initalise the container to hold the popup content
+      var html = '<div class="popup__content">';
+
+      if(offer.name) {
+        html += '<h2 class="offer__name">' + offer.name + '</h2>';
+      }
+
+      if(offer.image){
+        html += '<p> There should be an image here. </p>';
+      }
+      
+      if(offer.phone) {
+        html += '<p class="offer__phone">' + offer.phone + '</p>';
+      }
+
+      html += '<div class="offer__information"><ul>';
+
+      if(offer.spots) {
+        html += '<li><span>Sitzplätze:</span>' + offer.spots + '</li>';
+      }
+
+      if(offer.duration) {
+        html += '<li><span>Angebot bis:</span>' + offer.duration + '</li>';
+      }
+
+      if(offer.price) {
+        html += '<li><span>Preis:</span>' + offer.price + '</li>';
+      }
+
+      html += '</ul></div>'; // End .offer__information
+      
+      html += '</div>'; // End .popup__content
+      return html;
+    }
+
+    $('button.driver-mode').click(function(){
+      driver = !driver;
+      console.log('driver mode: ', driver); 
+      circles.clearLayers();     
+      $('#driver-settings').toggle();
+      if(!driver){
+        map.removeLayer(newOffer);
+        displayOffers();
+        refreshOffers();
+      } else {
+        var mapCenter =  {};
+        mapCenter.latlng = map.getCenter();
+        onMapClick(mapCenter);
+      }
+    });
+
+    $('button.send-offer').click(function(){
+      var offer = {
+        coordinates: selectedLocation,
+        name: $('input[name=name]').val(),
+        image: '',
+        phone: $('input[name=phone]').val(),
+        spots: $('select.car-spots').val(),
+        radius: $('#radius-slider').val(),
+        duration: $('select.offer-duration').val(),
+        price: $('input[name=price]').val()
+      }
+      console.log('offer: ', offer);
+      console.log('selectedLocation: ', selectedLocation);
+      ajaxPost('/newOffer', offer
+        
+        /*location: {
+          "type" : "Point", 
+          "coordinates" : [
+              e.latlng.lat, 
+              e.latlng.lng
+          ]
+        }*/
+      , function(err, data){
+        if(!err){
+          console.log('Offer posted.');
+        }
+        refreshOffers();
+      });
+    });
+
+
+    function ajaxPost(url, data, callback) {
+      $.ajax({
+          type: "POST",
+          url: url,
+          contentType: "application/json; charset = utf-8",
+          datatype: "json",
+          data: JSON.stringify(data),
+          success: (data) => {
+              callback(null, data)
+          },
+          error: (err) => {
+              callback(err, null)
+          }
+      });
+    }

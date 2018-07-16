@@ -1,8 +1,85 @@
 body {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
+}
+
+#driver-settings{
+  display: none;
+}
+
+/* Style the marker popup html */
+.offer__name {
+  margin: 0 0 .8em 0;
+}
+
+.offer__phone {
+  font-size: 1.3em;
+}
+
+.offer__information {
+  max-width: 16em;
+}
+
+.offer__information ul {
+  padding: 0;
+  margin: 0 0 1.5em;
+  list-style: none;
+}
+
+.offer__information ul li {
+  margin-bottom: .8em;
+}
+
+/* Property name */
+.offer__information ul li span {
+  font-size: 1.4em;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
+/* Property value (icon) */
+.offer__information__icon {
+  width: 2em;
+  float: right;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1000; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
