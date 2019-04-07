@@ -4,7 +4,7 @@ var MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://localhost:27017';
 
 // Database Name
-const dbName = 'partyDriver';
+const dbName = 'nightCruiser';
 
 var model = {
     findAll: function(collection, query, projection, callback){
