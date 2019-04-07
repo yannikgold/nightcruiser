@@ -31,6 +31,9 @@ a {
 
 .offer__information ul li {
   margin-bottom: .8em;
+  font-size: 1.4em;
+  font-weight: bold;
+  line-height: 1.5;
 }
 
 /* Property name */
