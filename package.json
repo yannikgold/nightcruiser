@@ -1,7 +1,7 @@
 {
-  "name": "partydriver",
+  "name": "nightcruiser",
   "version": "0.0.1",
-  "description": "Find local party drivers in this moment.",
+  "description": "Find local night cruisers in this very moment.",
   "author": "Yannik Goldgräbe",
   "private": true,
   "scripts": {
