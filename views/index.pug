@@ -186,21 +186,23 @@ block content
       }
       
       if(offer.phone) {
+        //Wieder einkommentieren, sobald Testing vorbei ist
+        //html += '<p class="offer__phone">' + '<a href="tel:' + offer.phone + '">' + offer.phone + '</a>' + '</p>';
         html += '<p class="offer__phone">' + offer.phone + '</p>';
       }
 
       html += '<div class="offer__information"><ul>';
 
       if(offer.spots) {
-        html += '<li><span>Sitzplätze:</span>' + offer.spots + '</li>';
+        html += '<li><span>Sitzplätze: </span>' + offer.spots + '</li>';
       }
 
       if(offer.duration) {
-        html += '<li><span>Angebot bis:</span>' + offer.duration + '</li>';
+        html += '<li><span>Angebot bis: </span>' + offer.duration + '</li>';
       }
 
       if(offer.price) {
-        html += '<li><span>Preis:</span>' + offer.price + '</li>';
+        html += '<li><span>Preis: </span>' + offer.price + '</li>';
       }
 
       html += '</ul></div>'; // End .offer__information
